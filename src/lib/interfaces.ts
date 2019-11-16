@@ -1,4 +1,4 @@
 
-export interface IDetector {
-  detect(txt: string): string;
+export interface ILanguageChecker {
+  check(txt: string, language: string): string;
 }
