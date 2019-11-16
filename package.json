@@ -1,0 +1,27 @@
+{
+  "name": "language-tool",
+  "version": "1.0.0",
+  "description": "",
+  "main": "language-tool.js",
+  "bin": {
+    "language-tool": "./language-tool.js"
+  },
+  "scripts": {
+    "pretest": "npm run build",
+    "test": "node ./bin/language-tool.js",
+    "build": "tsc",
+    "postbuild": "node ./scripts/pluckPackageJson.js",
+    "prepublish": "npm run build",
+    "publish": "npm publish ./bin"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "ts-node": "^8.5.2",
+    "typescript": "^3.7.2"
+  },
+  "dependencies": {
+    "@types/node": "^12.12.8",
+    "commander": "^4.0.1"
+  }
+}
