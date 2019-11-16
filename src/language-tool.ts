@@ -8,5 +8,5 @@ const p = require(`${__dirname}/package.json`);
 commander.version(p.version)
   .usage('<command>')
   .command('pluck', 'pluck sentences')
-  .command('split', 'split text file, support excel/txt')
+  .command('split', 'split text file, support excel')
   .parse(process.argv);
