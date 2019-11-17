@@ -1,6 +1,6 @@
 {
   "name": "language-tool",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "",
   "main": "language-tool.js",
   "bin": {
@@ -11,10 +11,10 @@
     "test": "node ./bin/language-tool.js",
     "build": "tsc",
     "postbuild": "node ./scripts/pluckPackageJson.js",
-    "prepublish": "npm run build",
-    "publish": "npm publish ./bin"
+    "prepub": "npm run build",
+    "pub": "npm publish ./bin"
   },
-  "author": "",
+  "author": "leeway",
   "license": "ISC",
   "devDependencies": {
     "ts-node": "^8.5.2",
