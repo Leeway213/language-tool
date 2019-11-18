@@ -1,5 +1,12 @@
 import { Observable } from "rxjs";
+import { ElementHandle } from "puppeteer";
 
+export interface ILanguageElement {
+  id: string;
+  alias?: string;
+  select?: () => any | Promise<any> | Observable<any>;
+}
 export interface ILanguageChecker {
-  check(txt: string, language: string): any;
+  supportLanguages(): ILanguageElement[] | Promise<ILanguageElement[]> | Observable<ILanguageElement[]>;
+  check(txt: string, language: string): boolean | Promise<boolean> | Observable<boolean>;
 }

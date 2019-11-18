@@ -1,6 +1,6 @@
 import puppeteer from 'puppeteer';
 
 export const config: puppeteer.LaunchOptions = {
-  headless: true,
+  headless: false,
   timeout: 0,
 };

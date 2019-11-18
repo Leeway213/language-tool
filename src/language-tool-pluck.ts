@@ -3,14 +3,17 @@
 import commander from 'commander';
 import camelcase from 'camelcase';
 import { ExcelProcessor } from './lib/file-processors/ExcelProcessor';
-import { LanguageToolOrgDetector } from './lib/detectors/LanguageToolOrgDetector';
+import { LanguageToolOrgChecker } from './lib/checkers/LanguageToolOrgChecker';
 import { log } from './utils/log';
+import { checkers } from './lib/checkers';
+import { Observable } from 'rxjs';
 
 commander.usage('<excel file path>')
   .option('--sheet <sheet>', 'specify sheet name')
   .option('--min <number>', 'min count of a sentence', parseInt)
   .option('--max <number>', 'max count of a sentence', parseInt)
   .option('--language-check <language>', 'language check', (str) => camelcase(str, { pascalCase: true }))
+  .option(`--checker <${Object.keys(checkers).join(' | ')}>`, `specify checker ${Object.keys(checkers).join(' or ')}`, 'languagetoolorg')
   .parse(process.argv);
 
 const excelFile = commander.args[0];
@@ -24,12 +27,13 @@ const sheetName = commander.sheet;
 const min = commander.min;
 const max = commander.max;
 const language = (commander.languageCheck);
+const checker = checkers[commander.checker];
 
 const reader = new ExcelProcessor(excelFile);
 
 const writer = new ExcelProcessor(`${reader.filename}_pluck.xlsx`);
 
-const checker = new LanguageToolOrgDetector();
+// const checker = new LanguageToolOrgChecker();
 
 (async () => {
   await reader.readFile();
@@ -41,7 +45,13 @@ const checker = new LanguageToolOrgDetector();
       loop++;
       let text = '';
       if (line instanceof Array && line[1]) {
-        text = line[1]!.toString()
+        const cell = line[1];
+        if (typeof cell === 'string') {
+          text = cell;
+        } else if ('richText' in (cell as any)) {
+          const texts: any[]  = (cell as any).richText;
+          text = texts.map(v => v.text).join('');
+        }
       }
       log(`${loop} - checking ${text}`, 'info');
       if (min) {
@@ -62,8 +72,8 @@ const checker = new LanguageToolOrgDetector();
 
       if (language) {
         try {
-          const errors = await checker.check(text, language);
-          if (errors.length > 0) {
+          const hasError = await checker.check(text, language);
+          if (hasError) {
             log(`language check not pass: ${text}`, 'warning');
             continue;
           }
@@ -84,7 +94,13 @@ const checker = new LanguageToolOrgDetector();
         loop++;
         let text = '';
         if (line instanceof Array && line[1]) {
-          text = line[1]!.toString()
+          const cell = line[1];
+          if (typeof cell === 'string') {
+            text = cell;
+          } else if ('richText' in (cell as any)) {
+            const texts: any[]  = (cell as any).richText;
+            text = texts.map(v => v.text).join('');
+          }
         }
         log(`${loop} - checking ${text}`, 'info');
         if (min) {
@@ -105,8 +121,13 @@ const checker = new LanguageToolOrgDetector();
 
         if (language) {
           try {
-            const errors = await checker.check(text, language);
-            if (errors.length > 0) {
+            let hasError = checker.check(text, language);
+            if (hasError instanceof Observable) {
+              hasError = hasError.toPromise();
+            } else if (hasError instanceof Promise) {
+              hasError = await hasError;
+            }
+            if (hasError) {
               log(`language check not pass: ${text}`, 'warning');
               continue;
             }
