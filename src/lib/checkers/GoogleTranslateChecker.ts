@@ -45,7 +45,7 @@ export class GoogleTranslateChecker implements ILanguageChecker {
     if (this.languages.length === 0) {
       await this.supportLanguages();
     }
-    const lan = this.languages.find(v => v.id === language || v.alias === language);
+    const lan = this.languages.find(v => v.id === language.toLowerCase() || v.alias === language);
     if (lan) {
       const url = `${this.GOOGLE_TRANSLATE_URL}&sl=${lan.id}`;
       if (this.page) {
@@ -56,7 +56,8 @@ export class GoogleTranslateChecker implements ILanguageChecker {
 
       const source = await this.page.$('#source');
       if (source) {
-        await source.type(txt);
+        await source.evaluate((el: any, txt: string) => el.value = txt, txt);
+        // await source.type(txt);
 
         let loop = true;
         const timer = setTimeout(() => {
