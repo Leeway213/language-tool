@@ -60,14 +60,18 @@ export class GoogleTranslateChecker implements ILanguageChecker {
         // await source.type(txt);
 
         let loop = true;
+        let timeout = false;
         const timer = setTimeout(() => {
-          throw new Error('checking timeout, please check your network');
+          timeout = true;
         }, 10000);
-        while(loop) {
+        while (loop) {
           const ele = await this.page.$('.tlid-translation.translation');
           if (ele) {
             clearTimeout(timer);
             break;
+          }
+          if (timeout) {
+            throw new Error('checking timeout, please check your network');
           }
         }
         const spellingCorrection = await this.page.$('#spelling-correction');

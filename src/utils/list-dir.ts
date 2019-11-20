@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 import { CellValue } from 'exceljs';
 import { checkers } from '../lib/checkers';
 
-const DIR = path.resolve(__dirname + '/../../test/da2');
+const DIR = path.resolve(__dirname + '/../../test/da');
 
 const files = fs.readdirSync(DIR);
 
@@ -27,7 +27,7 @@ let checker = checkers['google'];
     const writer = new ExcelProcessor(`${reader.filename}_pluck.xlsx`);
 
 
-    (async () => {
+    await (async () => {
       await reader.readFile();
       let count = 0;
       let loop = 0;
