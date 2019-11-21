@@ -3,7 +3,7 @@ import { BrowserDaemon } from "../browser";
 import { ElementHandle, Page } from "puppeteer";
 
 export class GoogleTranslateChecker implements ILanguageChecker {
-  readonly GOOGLE_TRANSLATE_URL = 'https://translate.google.cn/#view=home&op=translate&tl=zh-CN';
+  readonly GOOGLE_TRANSLATE_URL = 'https://translate.google.cn/#view=home&op=translate&tl=en';
 
   languages: ILanguageElement[] = [];
 
