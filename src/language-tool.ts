@@ -9,4 +9,5 @@ commander.version(p.version)
   .usage('<command>')
   .command('pluck', 'pluck sentences')
   .command('split', 'split text file, support excel')
+  .command('merge', 'merge excel files in a directory')
   .parse(process.argv);
