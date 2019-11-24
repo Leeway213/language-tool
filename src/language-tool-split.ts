@@ -17,7 +17,7 @@ commander.usage('<filepath>')
 
 commander.parse(process.argv);
 
-const filepath = commander.args[0];
+const filepath = commander.args[0] || './test.xlsx';
 const sheetName = commander.sheet;
 const slice = commander.slice;
 
@@ -75,6 +75,9 @@ async function processExcel(sheet?: number | string, splice = 1100, withHeader =
           writer.writeLine(line);
         }
         count++;
+      }
+      if (writer) {
+        await writer.save();
       }
     } catch (error) {
       log(error.message, 'error');

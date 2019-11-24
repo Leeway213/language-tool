@@ -8,15 +8,15 @@ import { Observable } from 'rxjs';
 import { CellValue } from 'exceljs';
 import { checkers } from '../lib/checkers';
 
-const DIR = path.resolve(__dirname + '/../../test/da');
+const DIR = '/Users/leeway/Downloads/swedishebook/5';
 
 const files = fs.readdirSync(DIR);
 
 let min: any = undefined;
 let max: any = undefined;
 let sheetName = undefined;
-let language = 'da';
-let checker = checkers['google'];
+let language = 'Swedish';
+let checker = checkers['languagetoolorg'];
 // let language = undefined;
 
 (async () => {

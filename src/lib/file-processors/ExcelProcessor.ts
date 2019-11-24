@@ -1,79 +1,96 @@
-import { IReader } from "./IReader";
 import { Workbook, CellValue } from 'exceljs';
 import path, { ParsedPath } from 'path';
+import { IFileProcessor, FileProcessor } from './FileProcessor';
 
-export class ExcelProcessor {
+export class ExcelProcessor extends FileProcessor {
 
   workbook = new Workbook();
 
-  fileInfo: ParsedPath;
+  // fileInfo: ParsedPath;
 
   readed = false;
 
-  get filename() {
-    return this.fileInfo.name;
-  }
+  // get filename() {
+  // return this.fileInfo.name;
+  // }
 
-  type: 'xlsx' | 'csv' = 'xlsx';
+  // type: 'xlsx' | 'csv' = 'xlsx';
 
-  constructor(public filepath: string) {
-    this.fileInfo = path.parse(this.filepath);
-    let type: 'xlsx' | 'csv' = 'xlsx';
-    if (this.fileInfo.ext === '.csv') {
-      throw new Error('not support');
-    } else if (this.fileInfo.ext === '.xls' || this.fileInfo.ext === '.xlsx') {
-      this.type = 'xlsx';
-    } else {
-      throw new Error('not support');
-    }
+  constructor(filepath: string) {
+    super(filepath);
+    this.type = 'xlsx';
   }
 
   async readFile() {
     if (this.readed) { return; }
-    await this.workbook[this.type].readFile(this.filepath);
+    await this.workbook[this.type as 'xlsx'].readFile(this.filepath);
     this.readed = true;
   }
 
   writeLine(line: CellValue[] | {
     [key: string]: CellValue;
-  }, sheet: number | string = 'sheet1') {
+  } | string, sheet: number | string = 'sheet1') {
+    if (typeof line === 'string') {
+      line = [line];
+    }
     const worksheet = this.workbook.worksheets.find(v => v.name === sheet || v.id === sheet) || this.workbook.addWorksheet(typeof sheet === 'string' ? sheet : undefined);
     worksheet.addRow(line);
   }
 
-  async *getLines(sheet: number | string) {
+  async *getLines(sheet?: number | string) {
     if (!this.readed) {
-      throw new Error('call read file first');
+      // throw new Error('call read file first');
+      await this.readFile();
     }
-    const worksheet = this.workbook.getWorksheet(sheet);
-    if (!worksheet) {
-      throw new Error('invalid sheet of ' + sheet);
-    }
-    let count = 0;
-    let empty = 0;
-    while (true) {
-      const row = worksheet.getRow(count);
-      if (row.hasValues) {
-        yield row.values;
-      } else {
-        empty++;
-      }
+    if (sheet) {
+      const worksheet = this.workbook.getWorksheet(sheet);
 
-      if (empty > 100) {
-        break;
+      if (!worksheet) {
+        throw new Error('invalid sheet of ' + sheet);
       }
-      count++;
+      let count = 0;
+      let empty = 0;
+      while (true) {
+        const row = worksheet.getRow(count);
+        if (row.hasValues) {
+          yield row.values;
+        } else {
+          empty++;
+        }
+
+        if (empty > 100) {
+          break;
+        }
+        count++;
+      }
+    } else {
+      for (const worksheet of this.workbook.worksheets) {
+        let count = 0;
+        let empty = 0;
+        while (true) {
+          const row = worksheet.getRow(count);
+          if (row.hasValues) {
+            yield row.values;
+          } else {
+            empty++;
+          }
+
+          if (empty > 100) {
+            break;
+          }
+          count++;
+        }
+      }
     }
   }
 
   save() {
-    return this.workbook[this.type].writeFile(this.filepath);
+    return this.workbook[this.type as 'xlsx'].writeFile(this.filepath);
   }
 }
 
 // (async () => {
-//   for await (const item of new ExcelProcessor().getLines('./test/test.xlsx')) {
-//     console.log(item);
-//     debugger
-//   }
+//   const file = new ExcelProcessor('./test.xlsx');
+//   file.writeLine('hello');
+//   await file.save();
 // })();
