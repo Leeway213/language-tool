@@ -19,7 +19,7 @@ commander.usage('<excel file path>')
   .option(`--checker <${Object.keys(checkers).join(' | ')}>`, `specify checker ${Object.keys(checkers).join(' or ')}`, 'languagetoolorg')
   .parse(process.argv);
 
-let filepath = commander.args[0] || '/Users/leeway/workspace/personal/drdk-spider/result 2/1';
+let filepath = commander.args[0];
 
 if (!filepath) {
   commander.help();
@@ -32,10 +32,10 @@ if (!fs.existsSync(filepath)) {
 }
 
 const sheetName = commander.sheet;
-const min = commander.min;
+const min = commander.min || 1;
 const max = commander.max;
-const language = (commander.languageCheck) || 'da';
-const checker = checkers[commander.checker] || 'google';
+const language = (commander.languageCheck);
+const checker = checkers[commander.checker];
 
 
 // const checker = new LanguageToolOrgChecker();
@@ -113,6 +113,7 @@ const run = async (filepath: string) => {
   if (count > 0) {
     await writer.save();
   }
+  fs.renameSync(filepath, filepath.replace(reader.fileInfo.name, reader.fileInfo.name + '_plucked'));
 };
 
 (async () => {

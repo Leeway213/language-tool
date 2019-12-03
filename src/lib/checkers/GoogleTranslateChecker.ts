@@ -63,7 +63,7 @@ export class GoogleTranslateChecker implements ILanguageChecker {
         let timeout = false;
         const timer = setTimeout(() => {
           timeout = true;
-        }, 10000);
+        }, 20000);
         while (loop) {
           const ele = await this.page.$('.tlid-translation.translation');
           if (ele) {
