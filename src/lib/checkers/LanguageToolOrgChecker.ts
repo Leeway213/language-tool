@@ -3,6 +3,9 @@ import { BrowserDaemon } from "../browser";
 import { Page, errors } from "puppeteer";
 
 export class LanguageToolOrgChecker implements ILanguageChecker {
+  translate(txt: string, language: string): Promise<string> {
+    throw new Error("Method not implemented.");
+  }
   readonly LANGUAGE_TOOL_ORG = 'https://languagetool.org/';
 
   errors: {

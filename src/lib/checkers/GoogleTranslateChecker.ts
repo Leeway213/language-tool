@@ -85,7 +85,41 @@ export class GoogleTranslateChecker implements ILanguageChecker {
       throw new Error(`\nError: Supported language:\n${this.languages.map(v => `${v.id}, ${v.alias || ''}`).join('\n')}`);
     }
   }
+
+  async translate(txt: string, language: string): Promise<string> {
+    // if (this.languages.length === 0) {
+    //   await this.supportLanguages();
+    // }
+    // const lan = this.languages.find(v => v.id === language.toLowerCase() || v.alias === language);
+    // if (lan) {
+    const url = `${this.GOOGLE_TRANSLATE_URL}&sl=${language}&tl=en&text=${txt}&op=translate`;
+    if (this.page) {
+      await this.page.goto(url);
+    } else {
+      this.page = await BrowserDaemon.instance.newPage(url).toPromise();
+    }
+
+    let loop = true;
+    let timeout = false;
+    const timer = setTimeout(() => {
+      timeout = true;
+    }, 20000);
+
+    let ele = undefined;
+    while (loop) {
+      ele = await this.page.$('span [lang=en]');
+      if (ele) {
+        clearTimeout(timer);
+        break;
+      }
+      if (timeout) {
+        throw new Error('checking timeout, please check your network');
+      }
+    }
+    return await this.page.evaluate(el => el.textContent, ele!);
+    // } else {
+    // throw new Error(`\nError: Supported language:\n${this.languages.map(v => `${v.id}, ${v.alias || ''}`).join('\n')}`);
+    // }
+  }
 }
-
-
 

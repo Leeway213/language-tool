@@ -10,4 +10,5 @@ commander.version(p.version)
   .command('pluck', 'pluck sentences')
   .command('split', 'split text file, support excel')
   .command('merge', 'merge excel files in a directory')
+  .command('sentences', '拆分句子并翻译')
   .parse(process.argv);
