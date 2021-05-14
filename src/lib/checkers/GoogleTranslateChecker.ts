@@ -1,6 +1,7 @@
 import { ILanguageChecker, ILanguageElement } from "../interfaces";
 import { BrowserDaemon } from "../browser";
 import { ElementHandle, Page } from "puppeteer";
+import { log } from "../../utils/log";
 
 export class GoogleTranslateChecker implements ILanguageChecker {
   readonly GOOGLE_TRANSLATE_URL = 'https://translate.google.cn/#view=home&op=translate&tl=en';
@@ -101,19 +102,33 @@ export class GoogleTranslateChecker implements ILanguageChecker {
 
     let loop = true;
     let timeout = false;
-    const timer = setTimeout(() => {
+    let timer = setTimeout(() => {
       timeout = true;
     }, 20000);
 
     let ele = undefined;
     while (loop) {
-      ele = await this.page.$('span [lang=en]');
+      try {
+        ele = await this.page.$('span [lang=en]');
+      } catch (error) {
+        log(error, 'error');
+      }
       if (ele) {
         clearTimeout(timer);
         break;
       }
       if (timeout) {
-        throw new Error('checking timeout, please check your network');
+        log(`page timeout ${this.page.url()}`, 'error');
+        log(`closing page ${this.page.url()}`, 'error');
+        await this.page.close();
+        log(`closed page ${this.page.url()}`, 'error');
+        log(`restart page ${this.page.url()}`, 'error');
+        this.page = await BrowserDaemon.instance.newPage(url).toPromise();
+        log(`restarted page ${this.page.url()}`, 'error');
+        timeout = false;
+        timer = setTimeout(() => {
+          timeout = true;
+        }, 20000);
       }
     }
     return await this.page.evaluate(el => el.textContent, ele!);

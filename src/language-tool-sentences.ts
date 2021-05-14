@@ -28,19 +28,31 @@ const writer = new ExcelProcessor(`${reader.fileInfo.dir}/${reader.filename}_sen
 const translator = new GoogleTranslateChecker();
 
 (async () => {
+  let cache = '';
+  let count = 0;
   for await (const line of reader.getLines()) {
     const newLines = breakSentence(line);
     log(`break sentences count: ${newLines.length}`, 'info');
     for (let newLine of newLines) {
       newLine = newLine.trim();
-      if (newLine) {
-        if (translate) {
+      cache += newLine;
+      if (translate) {
+        if (cache.length > 2000) {
           log(`translating: ${newLine}`, 'info');
-          const translated = await translator.translate(newLine, translate);
+          const translated = await translator.translate(cache, translate);
           log(`translated: ${translated}`, 'info');
-          writer.writeLine([newLine, translated]);
-        } else {
+          const lines = breakSentence(cache);
+          const translated_lines = breakSentence(translated);
+          for (let i = 0; i < lines.length; i++) {
+            writer.writeLine([lines[i], translated_lines[i]]);
+            log(`${++count} line writed`);
+          }
+          cache = '';
+        }
+      } else {
+        if (newLine) {
           writer.writeLine([newLine]);
+          log(`${++count} line writed`);
           log(`write to file: ${newLine}`, 'info');
         }
       }
