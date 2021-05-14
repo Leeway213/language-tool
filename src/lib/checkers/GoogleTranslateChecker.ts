@@ -106,16 +106,26 @@ export class GoogleTranslateChecker implements ILanguageChecker {
       timeout = true;
     }, 20000);
 
-    let ele = undefined;
+    let ele: ElementHandle<Element> | null = null;
+    let result = '';
     while (loop) {
       try {
-        ele = await this.page.$('div [lang=en]');
+        ele = await this.page.$('div [lang=en] span span');
       } catch (error) {
         log(error, 'error');
       }
       if (ele) {
-        clearTimeout(timer);
-        break;
+        result = await this.page.evaluate(el => el.textContent, ele!);
+        if (!result.includes('无法加载')) {
+          clearTimeout(timer);
+          break;
+        } else {
+          await this.page.reload();
+          timeout = false;
+          timer = setTimeout(() => {
+            timeout = true;
+          }, 20000);
+        }
       }
       if (timeout) {
         log(`page timeout ${this.page.url()}`, 'error');
