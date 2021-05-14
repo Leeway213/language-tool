@@ -37,8 +37,8 @@ const translator = new GoogleTranslateChecker();
       newLine = newLine.trim();
       cache += newLine;
       if (translate) {
-        if (cache.length > 2000) {
-          log(`translating: ${newLine}`, 'info');
+        if (cache.length > 4500) {
+          log(`translating: ${cache}`, 'info');
           const translated = await translator.translate(cache, translate);
           log(`translated: ${translated}`, 'info');
           const lines = breakSentence(cache);
@@ -58,4 +58,15 @@ const translator = new GoogleTranslateChecker();
       }
     }
   }
-})().finally(() => writer.save());
+  if (cache) {
+    log(`translating: ${cache}`, 'info');
+    const translated = await translator.translate(cache, translate);
+    log(`translated: ${translated}`, 'info');
+    const lines = breakSentence(cache);
+    const translated_lines = breakSentence(translated);
+    for (let i = 0; i < lines.length; i++) {
+      writer.writeLine([lines[i], translated_lines[i]]);
+      log(`${++count} line writed`);
+    }
+  }
+})().finally(() => writer.save()).finally(() => process.exit(0));

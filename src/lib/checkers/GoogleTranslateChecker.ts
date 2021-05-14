@@ -109,7 +109,7 @@ export class GoogleTranslateChecker implements ILanguageChecker {
     let ele = undefined;
     while (loop) {
       try {
-        ele = await this.page.$('span [lang=en]');
+        ele = await this.page.$('div [lang=en]');
       } catch (error) {
         log(error, 'error');
       }
