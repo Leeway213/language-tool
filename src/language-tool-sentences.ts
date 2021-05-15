@@ -31,42 +31,24 @@ const translator = new GoogleTranslateChecker();
   let cache = '';
   let count = 0;
   for await (const line of reader.getLines()) {
-    const newLines = breakSentence(line);
-    log(`break sentences count: ${newLines.length}`, 'info');
-    for (let newLine of newLines) {
-      newLine = newLine.trim();
-      cache += newLine;
-      if (translate) {
-        if (cache.length > 4500) {
-          log(`translating: ${cache}`, 'info');
-          const translated = await translator.translate(cache, translate);
-          log(`translated: ${translated}`, 'info');
-          const lines = breakSentence(cache);
-          const translated_lines = breakSentence(translated);
-          for (let i = 0; i < lines.length; i++) {
-            writer.writeLine([lines[i], translated_lines[i]]);
-            log(`${++count} line writed`);
-          }
-          cache = '';
-        }
-      } else {
-        if (newLine) {
-          writer.writeLine([newLine]);
-          log(`${++count} line writed`);
-          log(`write to file: ${newLine}`, 'info');
-        }
-      }
-    }
+    cache += line;
   }
-  if (cache) {
-    log(`translating: ${cache}`, 'info');
-    const translated = await translator.translate(cache, translate);
-    log(`translated: ${translated}`, 'info');
-    const lines = breakSentence(cache);
-    const translated_lines = breakSentence(translated);
-    for (let i = 0; i < lines.length; i++) {
-      writer.writeLine([lines[i], translated_lines[i]]);
-      log(`${++count} line writed`);
+  const newLines = breakSentence(cache);
+  log(`break sentences count: ${newLines.length}`, 'info');
+  for (let newLine of newLines) {
+    newLine = newLine.trim();
+    if (newLine.length > 3) {
+      // cache += newLine + '\n';
+      if (translate) {
+        log(`translating: ${newLine}`, 'info');
+        const translated = await translator.translate(newLine, translate);
+        log(`translated: ${translated}`, 'info');
+        writer.writeLine([newLine, translated]);
+      } else {
+        writer.writeLine([newLine]);
+        log(`${++count} line writed`);
+        log(`write to file: ${newLine}`, 'info');
+      }
     }
   }
 })().finally(() => writer.save()).finally(() => process.exit(0));

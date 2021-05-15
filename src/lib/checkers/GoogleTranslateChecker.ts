@@ -95,9 +95,11 @@ export class GoogleTranslateChecker implements ILanguageChecker {
     // if (lan) {
     const url = `${this.GOOGLE_TRANSLATE_URL}&sl=${language}&tl=en&text=${txt}&op=translate`;
     if (this.page) {
-      await this.page.goto(url);
+      await this.page.goto('about:blank');
+      this.page.goto(url);
     } else {
-      this.page = await BrowserDaemon.instance.newPage(url).toPromise();
+      this.page = await BrowserDaemon.instance.newPage('https://www.baidu.com').toPromise();
+      this.page.goto(url);
     }
 
     let loop = true;
@@ -112,7 +114,6 @@ export class GoogleTranslateChecker implements ILanguageChecker {
       try {
         ele = await this.page.$('div [lang=en] span span');
       } catch (error) {
-        log(error, 'error');
       }
       if (ele) {
         result = await this.page.evaluate(el => el.textContent, ele!);
@@ -133,7 +134,8 @@ export class GoogleTranslateChecker implements ILanguageChecker {
         await this.page.close();
         log(`closed page ${this.page.url()}`, 'error');
         log(`restart page ${this.page.url()}`, 'error');
-        this.page = await BrowserDaemon.instance.newPage(url).toPromise();
+        this.page = await BrowserDaemon.instance.newPage('https://www.baidu.com').toPromise();
+        this.page.goto(url);
         log(`restarted page ${this.page.url()}`, 'error');
         timeout = false;
         timer = setTimeout(() => {
