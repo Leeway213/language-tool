@@ -11,7 +11,7 @@ export function breakSentence(text: string) {
   for (const char of text) {
     if (br) {
       br = false;
-      if (char === '"' || char === '»' || char === '\'') {
+      if (char === '"' || char === '»' || char === '\'' || char === '’' || char === '”') {
         result += char;
         result += '\n';
         continue;
