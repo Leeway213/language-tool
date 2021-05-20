@@ -1,6 +1,6 @@
 {
   "name": "language-tool",
-  "version": "1.2.3",
+  "version": "1.2.5",
   "description": "",
   "main": "language-tool.js",
   "bin": {
