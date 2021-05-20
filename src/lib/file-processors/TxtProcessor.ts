@@ -12,7 +12,7 @@ export class TxtProcessor extends FileProcessor {
     }
     const lines = this.content.split('\n');
     for (const line of lines) {
-      if (line && line.split(' ').length > 5) {
+      if (line) {
         yield line;
       }
     }
