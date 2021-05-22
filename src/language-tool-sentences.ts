@@ -39,10 +39,14 @@ const translator = new GoogleTranslateChecker();
     newLine = newLine.trim();
     if (newLine.length > 3) {
       // cache += newLine + '\n';
+      newLine.replace(/^\'/g, '‘');
+      newLine.replace(/\'/g, '’');
       if (translate) {
         log(`translating: ${newLine}`, 'info');
         const translated = await translator.translate(newLine, translate);
         log(`translated: ${translated}`, 'info');
+        translated.replace(/^\'/g, '‘');
+        translated.replace(/\'/g, '’');
         writer.writeLine([newLine, translated]);
       } else {
         writer.writeLine([newLine]);
