@@ -23,7 +23,10 @@ export class SrtProcessor extends FileProcessor {
     this.content = this.parser.fromSrt(data);
     for (const line of this.content) {
       const $ = cheerio.load(line.text);
-      yield $.text();
+      const text = $.text().split('\n');
+      for (const t of text) {
+        yield t;
+      }
     }
   }
   writeLine(line: any, ...args: any[]): void {
