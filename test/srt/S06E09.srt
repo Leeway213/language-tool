@@ -1,0 +1,12 @@
+1
+00:09:16,640 --> 00:09:18,244
+<font color=#FFFF95>You men have a choice:</font>
+
+2
+00:09:20,200 --> 00:09:26,242
+<font color=#FFFF95>fight and die for masterswho would never fight and die for you,</font>
+
+3
+00:09:26,320 --> 00:09:30,006
+<font color=#FFFF95>or go home to your families.</font>
+

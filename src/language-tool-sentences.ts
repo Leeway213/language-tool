@@ -7,12 +7,14 @@ import { breakSentence } from "./utils/break-sentences";
 import { log } from "./utils/log";
 
 commander.usage('<txt or excel path>')
+  .option('--break <true|false>', '是否断句 默认断句')
   .option('--translate <translate>', '自动生成翻译');
 commander.parse(process.argv);
 
 let filepath = commander.args && commander.args[0];
-debugger
 const translate = commander.translate;
+const br = commander.break === undefined ? true : commander.break === 'true';
+console.log(typeof br, br);
 console.log(filepath);
 
 if (!filepath) {
@@ -28,12 +30,12 @@ const writer = new ExcelProcessor(`${reader.fileInfo.dir}/${reader.filename}_sen
 const translator = new GoogleTranslateChecker();
 
 (async () => {
-  let cache = '';
+  let cache: string[] = [];
   let count = 0;
   for await (const line of reader.getLines()) {
-    cache += line;
+    cache.push(line);
   }
-  const newLines = breakSentence(cache);
+  const newLines = br ? breakSentence(cache.join('\n')) : cache;
   log(`break sentences count: ${newLines.length}`, 'info');
   for (let newLine of newLines) {
     newLine = newLine.trim();
