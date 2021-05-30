@@ -22,7 +22,7 @@ export class SrtProcessor extends FileProcessor {
     const data = readFileSync(this.filepath, { encoding: 'utf-8' });
     this.content = this.parser.fromSrt(data);
     for (const line of this.content) {
-      let text = line.text.replace(/(\n)+/g, ' ').replace(/\s\s+/g, ' ');
+      let text = line.text.replace(/\n/g, ' || ').replace(/\s\s+/g, ' ').replace(/\[(.+)\]/g, '');
       const $ = cheerio.load(text);
       yield $.text();
     }
