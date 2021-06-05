@@ -13,6 +13,8 @@ commander.parse(process.argv);
 let filepath = commander.args && commander.args[0];
 const source = commander.source;
 const target = commander.target;
+console.log('source', source);
+console.log('target', target);
 if (!filepath) {
   commander.help();
   process.exit(1);
@@ -30,7 +32,7 @@ const translator = new GoogleTranslateChecker();
 (async () => {
   for await (const line of reader.getLines()) {
     log(`translating ${line}...`, 'info');
-    const translated = await translator.translate(line, source);
+    const translated = await translator.translate(line, source, target);
     writer.writeLine([line, translated]);
   }
 })().finally(() => writer.save()).finally(() => process.exit(0));

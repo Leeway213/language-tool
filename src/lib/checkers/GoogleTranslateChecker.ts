@@ -4,7 +4,7 @@ import { ElementHandle, Page } from "puppeteer";
 import { log } from "../../utils/log";
 
 export class GoogleTranslateChecker implements ILanguageChecker {
-  readonly GOOGLE_TRANSLATE_URL = 'https://translate.google.cn/#view=home&op=translate&tl=en';
+  readonly GOOGLE_TRANSLATE_URL = 'https://translate.google.cn/#view=home&op=translate';
 
   languages: ILanguageElement[] = [];
 
@@ -94,6 +94,7 @@ export class GoogleTranslateChecker implements ILanguageChecker {
     // const lan = this.languages.find(v => v.id === language.toLowerCase() || v.alias === language);
     // if (lan) {
     const url = `${this.GOOGLE_TRANSLATE_URL}&sl=${source}&tl=${target}&text=${txt}&op=translate`;
+    console.log('--->', url);
     if (this.page) {
       await this.page.goto('about:blank');
       this.page.goto(url);
@@ -112,7 +113,7 @@ export class GoogleTranslateChecker implements ILanguageChecker {
     let result = '';
     while (loop) {
       try {
-        ele = await this.page.$('div [lang=en] span span');
+        ele = await this.page.$(`div [lang=${target}] span span`);
       } catch (error) {
       }
       if (ele) {
