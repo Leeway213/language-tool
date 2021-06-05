@@ -87,13 +87,13 @@ export class GoogleTranslateChecker implements ILanguageChecker {
     }
   }
 
-  async translate(txt: string, language: string): Promise<string> {
+  async translate(txt: string, source: string, target = 'en'): Promise<string> {
     // if (this.languages.length === 0) {
     //   await this.supportLanguages();
     // }
     // const lan = this.languages.find(v => v.id === language.toLowerCase() || v.alias === language);
     // if (lan) {
-    const url = `${this.GOOGLE_TRANSLATE_URL}&sl=${language}&tl=en&text=${txt}&op=translate`;
+    const url = `${this.GOOGLE_TRANSLATE_URL}&sl=${source}&tl=${target}&text=${txt}&op=translate`;
     if (this.page) {
       await this.page.goto('about:blank');
       this.page.goto(url);

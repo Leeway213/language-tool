@@ -11,4 +11,5 @@ commander.version(p.version)
   .command('split', 'split text file, support excel')
   .command('merge', 'merge excel files in a directory')
   .command('sentences', '拆分句子并翻译')
+  .command('translate', '翻译句子')
   .parse(process.argv);
