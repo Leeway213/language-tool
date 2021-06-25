@@ -12,4 +12,6 @@ commander.version(p.version)
   .command('merge', 'merge excel files in a directory')
   .command('sentences', '拆分句子并翻译')
   .command('translate', '翻译句子')
+  .command('ocr', '通过ocr识别文件')
+  .command('gcp', '设置gcp keystore')
   .parse(process.argv);
