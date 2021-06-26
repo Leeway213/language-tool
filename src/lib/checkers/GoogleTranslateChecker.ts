@@ -1,9 +1,9 @@
-import { ILanguageChecker, ILanguageElement } from "../interfaces";
+import { ILanguageChecker, ILanguageElement, ILanguageTranslater } from "../interfaces";
 import { BrowserDaemon } from "../browser";
 import { ElementHandle, Page } from "puppeteer";
 import { log } from "../../utils/log";
 
-export class GoogleTranslateChecker implements ILanguageChecker {
+export class GoogleTranslateChecker implements ILanguageChecker, ILanguageTranslater {
   readonly GOOGLE_TRANSLATE_URL = 'https://translate.google.cn/#view=home&op=translate';
 
   languages: ILanguageElement[] = [];

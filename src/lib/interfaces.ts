@@ -9,5 +9,9 @@ export interface ILanguageElement {
 export interface ILanguageChecker {
   supportLanguages(): ILanguageElement[] | Promise<ILanguageElement[]> | Observable<ILanguageElement[]>;
   check(txt: string, language: string): boolean | Promise<boolean> | Observable<boolean>;
-  translate(txt: string, language: string): Promise<string>;
+}
+
+export interface ILanguageTranslater {
+  translate(txt: string, from: string, to: string): Promise<string>;
+  batchTranslate?: (txt: string[], from: string, to: string) => Promise<string[]>;
 }
