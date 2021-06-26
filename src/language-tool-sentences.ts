@@ -38,7 +38,7 @@ const translator = new GoogleTranslater();
   }
   const newLines = br ? breakSentence(cache.join('\n')) : cache;
   log(`break sentences count: ${newLines.length}`, 'info');
-  if (typeof translator.batchTranslate === 'function') {
+  if (translate && typeof translator.batchTranslate === 'function') {
     const sources = newLines.filter(l => l.length > 3).map(l => l.replace(/^\'/g, '‘')).map(l => l.replace(/\'/g, '’'));
     log(`use batch translator...`, 'info');
     const batchCount = 100;
