@@ -8,12 +8,14 @@ import { log } from "./utils/log";
 
 commander.usage('<txt or excel path>')
   .option('--source <source language>', '源语言')
-  .option('--target <target language>', '目标语言');
+  .option('--target <target language>', '目标语言')
+  .option('--gcp', '是否使用gcp翻译');
 commander.parse(process.argv);
 
 let filepath = commander.args && commander.args[0];
 const source = commander.source;
 const target = commander.target;
+const gcp = commander.gcp;
 console.log('source', source);
 console.log('target', target);
 if (!filepath) {
@@ -28,13 +30,13 @@ if (!existsSync(filepath)) {
 
 const reader = createProcessor(filepath);
 const writer = new ExcelProcessor(`${reader.fileInfo.dir}/${reader.filename}_translated.xlsx`);
-const translator = new GoogleTranslater();
+const translator = gcp ? new GoogleTranslater() : new GoogleTranslateChecker();
 
 (async () => {
   const lines: string[] = [];
   for await (const line of reader.getLines()) {
     log(`translating ${line}...`, 'info');
-    if (typeof translator.batchTranslate === 'function') {
+    if (translator instanceof GoogleTranslater) {
       lines.push(line);
     } else {
       const translated = await translator.translate(line, source, target);
@@ -42,7 +44,7 @@ const translator = new GoogleTranslater();
     }
   }
 
-  if (typeof translator.batchTranslate === 'function') {
+  if (translator instanceof GoogleTranslater) {
     const batchCount = 100;
     for (let i = 0; i < lines.length; i += batchCount) {
       const slice = lines.slice(i, i + batchCount);

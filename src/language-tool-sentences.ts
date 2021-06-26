@@ -8,13 +8,15 @@ import { breakSentence } from "./utils/break-sentences";
 import { log } from "./utils/log";
 
 commander.usage('<txt or excel path>')
-  .option('--break <true|false>', '是否断句 默认断句')
-  .option('--translate <translate>', '自动生成翻译');
+  .option('--break', '是否断句 默认断句')
+  .option('--translate <translate>', '自动生成翻译')
+  .option('--gcp', '是否使用gcp翻译');
 commander.parse(process.argv);
 
 let filepath = commander.args && commander.args[0];
 const translate = commander.translate;
-const br = commander.break === undefined ? true : commander.break === 'true';
+const gcp = commander.gcp;
+const br = commander.break === undefined ? true : commander.break;
 console.log(typeof br, br);
 console.log(filepath);
 
@@ -28,7 +30,7 @@ if (!existsSync(filepath)) {
 }
 const reader = createProcessor(filepath);
 const writer = new ExcelProcessor(`${reader.fileInfo.dir}/${reader.filename}_sentences.xlsx`);
-const translator = new GoogleTranslater();
+const translator = gcp ? new GoogleTranslater() : new GoogleTranslateChecker();
 
 (async () => {
   let cache: string[] = [];
@@ -38,7 +40,7 @@ const translator = new GoogleTranslater();
   }
   const newLines = br ? breakSentence(cache.join('\n')) : cache;
   log(`break sentences count: ${newLines.length}`, 'info');
-  if (translate && typeof translator.batchTranslate === 'function') {
+  if (translate && translator instanceof GoogleTranslater) {
     const sources = newLines.filter(l => l.length > 3).map(l => l.replace(/^\'/g, '‘')).map(l => l.replace(/\'/g, '’'));
     log(`use batch translator...`, 'info');
     const batchCount = 100;
