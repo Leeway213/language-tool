@@ -19,7 +19,7 @@ export class TxtProcessor extends FileProcessor {
   }
 
   writeLine(line: any, ...args: any[]): void {
-    throw new Error("Method not implemented.");
+    fs.appendFileSync(this.filepath, line + '\n', {encoding: 'utf-8'});
   }
 
   readFile() {

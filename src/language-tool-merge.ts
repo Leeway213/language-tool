@@ -3,11 +3,15 @@ import fs from 'fs-extra';
 import path from 'path';
 import { log } from './utils/log';
 import { ExcelProcessor } from './lib/file-processors/ExcelProcessor';
+import { createProcessor } from './lib/file-processors';
 
-commander.usage('<directory includes excel files>')
-  .parse(process.argv);
+commander.usage('<directory includes txt or excel files>')
+  .option('--output <txt | excel>', '输出文件格式');
+
+commander.parse(process.argv)
 
 const filepath = commander.args[0];
+const output = commander.output || 'txt';
 
 if (!filepath) {
   commander.help();
@@ -25,20 +29,18 @@ if (!fs.statSync(filepath).isDirectory()) {
 }
 
 (async () => {
-  const writer = new ExcelProcessor(path.resolve(filepath, 'merge.xlsx'));
+  // const writer = new ExcelProcessor(path.resolve(filepath, 'merge.xlsx'));
+  const writer = createProcessor(path.resolve(filepath, 'merge.' + output));
   for (const item of fs.readdirSync(filepath)) {
     const p = path.resolve(filepath, item);
-    const fileInfo = path.parse(p);
-    switch (fileInfo.ext) {
-      case '.xlsx':
-      case '.xls':
-        const reader = new ExcelProcessor(p);
-        const lines = reader.getLines();
-        for await (const line of lines) {
-          writer.writeLine(line);
-        }
-        break;
+    log(`reading file: ${p}`, 'info');
+    const reader = createProcessor(p);
+    for await (const line of reader.getLines()) {
+      log(`write line: ${line}`, 'info');
+      writer.writeLine(line);
     }
   }
-  await writer.save();
+  if (writer instanceof ExcelProcessor) {
+    await writer.save();
+  }
 })().finally(() => process.exit());
