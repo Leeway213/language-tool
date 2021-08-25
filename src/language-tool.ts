@@ -14,4 +14,5 @@ commander.version(p.version)
   .command('translate', '翻译句子')
   .command('ocr', '通过ocr识别文件')
   .command('gcp', '设置gcp keystore')
+  .command('textgridfill', '填充textgrid')
   .parse(process.argv);

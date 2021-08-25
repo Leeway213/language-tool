@@ -15,7 +15,7 @@ export abstract class FileProcessor {
     return this.fileInfo.name;
   }
 
-  type: 'xlsx' | 'txt' | 'srt';
+  type: 'xlsx' | 'txt' | 'srt' | 'textgrid';
 
   constructor(protected filepath: string) {
     this.fileInfo = path.parse(this.filepath);
@@ -25,6 +25,8 @@ export abstract class FileProcessor {
       this.type = 'txt';
     } else if (this.fileInfo.ext === '.srt') {
       this.type = 'srt';
+    } else if (this.fileInfo.ext.toLowerCase() === '.textgrid') {
+      this.type = 'textgrid';
     } else {
       throw new Error('not support');
     }
