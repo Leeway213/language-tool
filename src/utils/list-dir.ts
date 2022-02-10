@@ -75,7 +75,7 @@ let checker = checkers['languagetoolorg'];
               return;
             }
             log(`language check pass: ${text}`, 'success');
-          } catch (error) {
+          } catch (error: any) {
             log(error.message, 'error');
             return;
           }

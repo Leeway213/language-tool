@@ -97,7 +97,7 @@ const run = async (filepath: string) => {
           return;
         }
         log(`language check pass: ${text}`, 'success');
-      } catch (error) {
+      } catch (error: any) {
         log(error.message, 'error');
         return;
       }
@@ -123,7 +123,7 @@ const run = async (filepath: string) => {
       const file = path.resolve(filepath, item);
       try {
         await run(file);
-      } catch (error) {
+      } catch (error: any) {
         log(error.message, 'error');
       }
     }
@@ -183,7 +183,7 @@ const run = async (filepath: string) => {
 //           return;
 //         }
 //         log(`language check pass: ${text}`, 'success');
-//       } catch (error) {
+//       } catch (error: any) {
 //         log(error.message, 'error');
 //         return;
 //       }

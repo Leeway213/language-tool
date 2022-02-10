@@ -114,7 +114,7 @@ export class GoogleTranslateChecker implements ILanguageChecker, ILanguageTransl
     while (loop) {
       try {
         ele = await this.page.$(`div [lang=${target}] span span`);
-      } catch (error) {
+      } catch (error: any) {
       }
       if (ele) {
         result = await this.page.evaluate(el => el.textContent, ele!);

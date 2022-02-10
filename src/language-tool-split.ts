@@ -79,7 +79,7 @@ async function processExcel(sheet?: number | string, splice = 1100, withHeader =
       if (writer) {
         await writer.save();
       }
-    } catch (error) {
+    } catch (error: any) {
       log(error.message, 'error');
     }
 
