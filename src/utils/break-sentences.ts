@@ -2,6 +2,9 @@ const BREAK_CHAR = [
   '.',
   '!',
   '?',
+  '。',
+  '？',
+  '！',
 ]
 
 export function breakSentence(text: string) {
