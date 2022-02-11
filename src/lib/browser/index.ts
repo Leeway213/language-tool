@@ -25,7 +25,7 @@ export class BrowserDaemon {
   private endpoint = '';
 
   private constructor() {
-    this.browser = from(launch(config)).pipe(shareReplay());
+    this.browser = from(puppeteer.launch(config)).pipe(shareReplay());
     // this.browser = from(connect({ browserURL: 'http://localhost:54281' })).pipe(
     //   catchError(() => this.startDaemon()),
     //   flatMap(() => from(connect({ browserURL: 'http://localhost:54281' })))

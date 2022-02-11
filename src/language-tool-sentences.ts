@@ -10,11 +10,13 @@ import { log } from "./utils/log";
 commander.usage('<txt or excel path>')
   .option('--break', '是否断句 默认断句')
   .option('--translate <translate>', '自动生成翻译')
+  .option('--target <target language>', 'default: en')
   .option('--gcp', '是否使用gcp翻译');
 commander.parse(process.argv);
 
 let filepath = commander.args && commander.args[0];
 const translate = commander.translate;
+const target = commander.target;
 const gcp = commander.gcp;
 const br = commander.break === undefined ? true : commander.break;
 console.log(typeof br, br);
@@ -47,7 +49,7 @@ const translator = gcp ? new GoogleTranslater() : new GoogleTranslateChecker();
     for (let i = 0; i < sources.length; i += batchCount) {
       const slice = sources.slice(i, i + batchCount);
       log(`translating batch count: ${slice.length}`, 'info');
-      const translated = (await translator.batchTranslate(slice, translate, 'en')).map(l => l.replace(/^\'/g, '‘')).map(l => l.replace(/\'/g, '’'));
+      const translated = (await translator.batchTranslate(slice, translate, target || 'en')).map(l => l.replace(/^\'/g, '‘')).map(l => l.replace(/\'/g, '’'));
       log(`translated count: ${translated.length}`, 'info');
       for (let j = 0; j < slice.length; j++) {
         log(`writing line src: ${slice[j]} trans: ${translated[j]}`);
@@ -63,7 +65,7 @@ const translator = gcp ? new GoogleTranslater() : new GoogleTranslateChecker();
         newLine.replace(/\'/g, '’');
         if (translate) {
           log(`translating: ${newLine}`, 'info');
-          const translated = await translator.translate(newLine, translate, 'en');
+          const translated = await translator.translate(newLine, translate, target || 'en');
           log(`translated: ${translated}`, 'info');
           translated.replace(/^\'/g, '‘');
           translated.replace(/\'/g, '’');
@@ -76,4 +78,4 @@ const translator = gcp ? new GoogleTranslater() : new GoogleTranslateChecker();
       }
     }
   }
-})().finally(() => writer.save()).finally(() => process.exit(0));
+})().catch(err => log(err, 'error')).finally(() => writer.save()).finally(() => process.exit(0));
